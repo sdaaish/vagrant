@@ -40,5 +40,5 @@ $shell = <<-SHELL
         if [ ! -d ~vagrant/repos ]; then
             git clone https://github.com/sdaaish/dotfiles.git ~vagrant/repos/dotfiles
         fi
-        touch ${PROVISIONED}
+        sudo touch ${PROVISIONED}
 SHELL
