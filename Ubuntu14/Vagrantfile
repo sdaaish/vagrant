@@ -1,5 +1,7 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "scotch/box"
+  config.vm.hostname = "scotchbox"
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -19,14 +21,15 @@ Vagrant.configure(2) do |config|
     vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'off']
     vb.customize ['modifyvm', :id, '--natdnsproxy1', 'off']
   end
-  config.vm.provision "shell", inline: $shell
+  config.vm.provision "shell", inline: $shell, privileged: false
 end
 
 
 $shell = <<-SHELL
-PROVISIONED=/usr/local/etc/vagrant_provisioned
+        PROVISIONED=/usr/local/etc/vagrant_provisioned
 
-        if [-f ${PROVISIONED} ]; then
+	#Only provision once
+        if [ -f ${PROVISIONED} ]; then
                 exit 0
         fi
         echo "Provisioning..."
