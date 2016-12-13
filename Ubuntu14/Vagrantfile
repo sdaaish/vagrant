@@ -37,6 +37,7 @@ $shell = <<-SHELL
         sudo apt-get install -y build-essential wget git emacs
         sudo apt-get install -y bzip2 unzip p7zip-full
         sudo apt-get install -y openssl htop
+        sudo apt-get install -y etckeeper
         if [ ! -d ~vagrant/repos ]; then
             git clone https://github.com/sdaaish/dotfiles.git ~vagrant/repos/dotfiles
         fi
