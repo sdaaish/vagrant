@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.provision "shell", inline: $shell, privileged: false
+end
+
+$shell = <<-SHELL
+        PROVISIONED=/usr/local/etc/vagrant_provisioned
+
+	#Only provision once
+        if [ -f ${PROVISIONED} ]; then
+                exit 0
+        fi
+        echo "Provisioning..."
+        sudo apt-get update
+        sudo apt-get install -y build-essential wget git emacs-nox
+        sudo apt-get install -y bzip2 unzip p7zip-full
+        sudo apt-get install -y openssl htop
+        sudo apt-get install -y etckeeper
+        if [ ! -d ~/repos ]; then
+            mkdir -p  ~/repos
+            git clone https://github.com/sdaaish/dotfiles.git ~/repos/dotfiles
+        fi
+        if [ ! -d ~/settings ]; then
+                mkdir -p ~/settings
+                cd settings
+                git init
+        fi
+        sudo touch ${PROVISIONED}
+SHELL
