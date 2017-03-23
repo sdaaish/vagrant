@@ -3,6 +3,7 @@ Vagrant.configure(2)  do |config|
   config.vm.hostname = "graylog"
 
   config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 514, host: 514, protocol: 'udp'
   config.vm.network :forwarded_port, guest: 12201, host: 12201, protocol: 'udp'
   config.vm.network :forwarded_port, guest: 12201, host: 12201, protocol: 'tcp'
 
@@ -18,6 +19,17 @@ Vagrant.configure(2)  do |config|
     rm graylog_latest.deb
     graylog-ctl set-external-ip http://127.0.0.1:8080/api
     graylog-ctl reconfigure
+    sudo apt-get install emacs24-nox git wget
+        if [ ! -d ~vagrant/repos ]; then
+            mkdir -p  ~vagrant/repos
+            git clone https://github.com/sdaaish/dotfiles.git ~vagrant/repos/dotfiles
+        fi
+        if [ ! -d ~vagrant/settings ]; then
+                mkdir -p ~vagrant/settings
+                cd settings
+                git init
+        fi
+
 SCRIPT
 
   config.vm.provision "shell", inline: $script
