@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.network "forwarded_port", guest: 8080, host: 8080
-  config.vm.network "forwarded_port", guest: 3128, host: 8081
+  config.vm.network "forwarded_port", guest: 3128, host: 18081
   config.vm.provision "shell", inline: $shell, privileged: false
 end
 
