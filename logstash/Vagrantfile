@@ -1,0 +1,50 @@
+Vagrant.configure(2) do |config|
+  config.vm.box = "zeab/ub-16.04-64x-elk"
+  config.vm.hostname = "logstash"
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  #  config.vm.network "public_network",
+  # use_dhcp_assigned_default_route: true
+  
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Disable VirtualBox DNS proxy as it may cause issues.
+  # See https://github.com/docker/machine/pull/1069
+  config.vm.provider :virtualbox do |vb|
+    #  vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'off']
+    #  vb.customize ['modifyvm', :id, '--natdnsproxy1', 'off']
+  end
+  config.vm.provision "shell", inline: $shell, privileged: false
+end
+
+
+$shell = <<-SHELL
+        PROVISIONED=/usr/local/etc/vagrant_provisioned
+
+	#Only provision once
+        if [ -f ${PROVISIONED} ]; then
+                exit 0
+        fi
+        echo "Provisioning..."
+        sudo apt-get update
+        sudo apt-get install -y build-essential wget git emacs
+        sudo apt-get install -y bzip2 unzip p7zip-full
+        sudo apt-get install -y openssl htop
+        sudo apt-get install -y etckeeper
+        if [ ! -d ~vagrant/repos ]; then
+            git clone https://github.com/sdaaish/dotfiles.git ~vagrant/repos/dotfiles
+        fi
+        if [ ! -d ~vagrant/settings ]; then
+                mkdir -p ~vagrant/settings
+                cd settings
+                git init
+        fi
+        sudo touch ${PROVISIONED}
+SHELL
