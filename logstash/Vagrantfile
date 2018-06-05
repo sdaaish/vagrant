@@ -34,13 +34,13 @@ $shell = <<-SHELL
         fi
         echo "Provisioning..."
         sudo apt-get update
+        sudo apt-get install -y etckeeper
         sudo apt-get install -y build-essential wget git emacs-nox
         sudo apt-get install -y bzip2 unzip p7zip-full
         sudo apt-get install -y openssl htop
-        sudo apt-get install -y etckeeper
         sudo apt-get install -y kafkacat
-        sudo cp /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
-        sudo echo "Europe/Stockholm" /etc/timezone
+        sudo cp -f /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
+        sudo printf "Europe/Stockholm\n" /etc/timezone
         if [ ! -d ~vagrant/repos ]; then
             git clone https://github.com/sdaaish/dotfiles.git ~vagrant/repos/dotfiles
         fi
